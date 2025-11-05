@@ -9,8 +9,9 @@ from pyannote.audio.core.io import Audio
 def test_audio_resample():
     "Audio is correctly resampled when it isn't the correct sample rate"
     test_file = "tests/data/dev00.wav"
-    info = torchaudio.info(test_file)
-    old_sr = info.sample_rate
+    # Use Audio class to get original sample rate instead of torchaudio.info (removed in PyTorch 2.9.0)
+    temp_loader = Audio(mono="downmix")
+    _, old_sr = temp_loader(test_file)
     loader = Audio(sample_rate=old_sr // 2, mono="downmix")
     wav, sr = loader(test_file)
     assert isinstance(wav, Tensor)
